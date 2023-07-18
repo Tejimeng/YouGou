@@ -1,5 +1,9 @@
 <template>
 	<view>
+		<!-- 使用自定义的搜索组件 -->
+		<view class="search-box">
+			<my-search @click="gotoSearch"></my-search>
+		</view>
 		<!-- 首页轮播图 -->
 		<swiper :indicator-dots="true" :autoplay="true" :interval="3000" :duration="1000" :circular="true">
 			<swiper-item v-for="item in swiperList" :key="item.goods_id">
@@ -23,16 +27,17 @@
 				<!-- 楼层图片区域 -->
 				<view class="floor-img-box">
 					<!-- 左侧大图片的盒子 -->
-					<navigator  class="left-img-box" :url="item.product_list[0].url">
+					<navigator class="left-img-box" :url="item.product_list[0].url">
 						<image :src="item.product_list[0].image_src"
 							:style="{width: item.product_list[0].image_width + 'rpx'}" mode="widthFix"></image>
-					</navigator >
+					</navigator>
 					<!-- 右侧 4 个小图片的盒子 -->
 					<view class="right-img-box">
-						<navigator :url="item2.url" class="right-img-item" v-for="(item2, i2) in item.product_list" :key="i2" v-if="i2 !== 0">
+						<navigator :url="item2.url" class="right-img-item" v-for="(item2, i2) in item.product_list"
+							:key="i2" v-if="i2 !== 0">
 							<image :src="item2.image_src" mode="widthFix" :style="{width: item2.image_width + 'rpx'}">
 							</image>
-						</navigator >
+						</navigator>
 					</view>
 				</view>
 			</view>
@@ -87,14 +92,20 @@
 				} = await uni.$http.get('/api/public/v1/home/floordata')
 				if (res.meta.status !== 200) return
 				// 对返回的数据进行处理，添加一个携带query参数的转向分包的url
-				res.message.forEach(floor=>{
-					floor.product_list.forEach(prod=>{
+				res.message.forEach(floor => {
+					floor.product_list.forEach(prod => {
 						// 创建一个新的属性
-						prod.url='/subpkg/goods_list/goods_list?'+prod.navigator_url.split('?')[1]
+						prod.url = '/subpkg/goods_list/goods_list?' + prod.navigator_url.split('?')[1]
 					})
 				})
 				this.floorList = res.message
 			},
+			// 搜索框的处理函数
+			gotoSearch() {
+				uni.navigateTo({
+					url: '/subpkg/search/search'
+				})
+			}
 		},
 		// 生命周期函数
 		onLoad() {
@@ -106,6 +117,12 @@
 </script>
 
 <style lang="scss">
+	// 搜索框
+	.search-box{
+		position: sticky;
+		top: 0;
+		z-index: 999;
+	}
 	// 轮播图部分
 	swiper {
 		height: 330rpx;
