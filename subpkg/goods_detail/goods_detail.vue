@@ -36,7 +36,28 @@
 </template>
 
 <script>
+	import {
+		mapMutations,
+		mapGetters
+	} from 'vuex'
 	export default {
+		computed: {
+			// 映射出total计算属性
+			...mapGetters('m_cart', ['total'])
+		},
+		watch: {
+			// 对total进行监听
+			total: {
+				handler: function(newValue) {
+					let findResult = this.options.find(item => item.text === '购物车')
+					if (findResult) {
+						findResult.info = newValue
+					}
+				},
+				// 开启立即监听
+				immediate: true
+			}
+		},
 		data() {
 			return {
 				// 商品详情对象
@@ -49,7 +70,7 @@
 				}, {
 					icon: 'cart',
 					text: '购物车',
-					info: 2
+					info: 0
 				}],
 				buttonGroup: [{
 						text: '加入购物车',
@@ -71,6 +92,8 @@
 			this.getGoodsDetail(goods_id)
 		},
 		methods: {
+			// 映射出store中的add方法，用于在此页面使用
+			...mapMutations('m_cart', ['addToCart']),
 			// 获取商品的详情
 			async getGoodsDetail(goods_id) {
 				const {
@@ -106,12 +129,29 @@
 				if (e.content.text === '店铺') {
 					uni.showToast({
 						title: '店铺还在添加中~',
-						icon:'none'
+						icon: 'none'
 					})
 				}
 			},
 			buttonClick(e) {
 				if (e.content.text === '加入购物车') {
+					// 解构出一个goods对象
+					let {
+						goods_id,
+						goods_name,
+						goods_price,
+						goods_small_logo,
+					} = this.goods_info
+					let goods = {
+						goods_id,
+						goods_name,
+						goods_price,
+						goods_count: 1,
+						goods_small_logo,
+						goods_state: true
+					}
+					// 通过映射出的方法进行添加
+					this.addToCart(goods)
 					uni.showToast({
 						title: '加入购物车成功！',
 					})

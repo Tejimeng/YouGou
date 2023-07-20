@@ -1,7 +1,7 @@
 // #ifndef VUE3
 import Vue from 'vue'
 import App from './App'
-
+import store from './store/store.js'
 Vue.config.productionTip = false
 import {
 	$http
@@ -33,7 +33,8 @@ $http.afterRequest = function(res) {
 App.mpType = 'app'
 
 const app = new Vue({
-	...App
+	...App,
+	store
 })
 app.$mount()
 // #endif
