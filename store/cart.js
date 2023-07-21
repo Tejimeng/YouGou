@@ -68,7 +68,7 @@ export default {
 	},
 	// 用于外部组件获取state中的数据
 	getters: {
-		// 返回总的加入购物车中的数量
+		// 总的加入购物车中的数量
 		total(state) {
 			// let c = 0
 			// state.cart.forEach(goods => c += goods.goods_count)

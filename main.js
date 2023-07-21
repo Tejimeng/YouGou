@@ -16,6 +16,14 @@ $http.beforeRequest = function(options) {
 	uni.showLoading({
 		title: '数据加载中...',
 	})
+	// 判断请求的是否为有权限的接口
+	if (options.url.indexOf('/my') !== -1) {
+		// 添加头部字段
+		options.header = {
+			// 获取个人用户信息中的token字段
+			Authorization: store.state.m_user.token
+		}
+	}
 }
 
 // 请求完成之后做一些事情
@@ -23,8 +31,8 @@ $http.afterRequest = function(res) {
 	uni.hideLoading()
 	if (res.data.meta.status !== 200) {
 		uni.showToast({
-			title:"请求发生错误！",
-			duration:1500,
+			title: "请求发生错误！",
+			duration: 1500,
 			icon: 'none',
 		})
 	}
